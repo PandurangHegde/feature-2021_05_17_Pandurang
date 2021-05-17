@@ -3,10 +3,29 @@
 
 @section design Design explanation
 
-Describe what you did here.
+Step 1: Initialization
+Step 1.1: Process the information in Torque vs Pedal Angle graph and calculate the slope and constants for evey straight line present.
+Step 1.2: Initialize LED and ADCs; 
+		  if Int Not Ok: Error
 
-There is no need to repeat the description for what it should do that you have
-received again here.
+Step 2: Calculate pedal angle in percentage.
+Step 2.1: adc value(in volts) = adc value * 5 / 1023
+Step 2.2: angle(as per adc0) = (adc0_voltage - 0.5)/(0.1);
+          angle(as per adc1) = (adc1_voltage - 1.0)/(0.08);
+		  if angle <0 or angle >30: Error.
+Step 2.3: Average angle = (angle0 + angle1)/2;
+Step 2.4: pedal_angle_perc = (Average angle * 100) / 30;
+
+Step 3: Calculate torque based on pedal angle percentage and current speed
+Step 3.1: if speed <0 or speed >120: Error
+		  if speed <50: treat it like speed = 0; 
+          if speed >=50:treat it like speed = 50; 
+Step 3.2: Choose the corresponding slope and constant for the straight line which defines the torque for the relevant interval
+Step 3.2: Calculate the torque using straight line equation: torque = slope*pedal_percentage + constant
+
+Scheduling:
+In the current code, a sequention execution involving adc_read -> speed read -> torque calculation is performed.
+In case, these three funstionalities are scheduled as separate tasks, they have to be scheduled in same order one after other. This is necessary to ensure, latest data is utilized in torque calculation.
 
 <!-- If you know plantUML and you have it installed (maybe adapt PLANTUML_JAR_PATH
   in Doxyfile if it's not at `/usr/share/plantuml`) then you can use this:
@@ -21,6 +40,7 @@ received again here.
 
 @section remarks Remarks and suggestions
 
-Any remarks, suggestions or things that you like to point out?
+1. In the Pedalmap graph, information provided only with respect to 0 km/hr and 50 km/hr. For any other speeds, there is ambiguity in order to calculate the torque.
+2. No information is provided regarding the calculation of final angle based on 2 adc values. When the angles calculated based on 2 values differ, then the requirement remains ambiguious. 
 
 */
