@@ -1,4 +1,3 @@
-# feature-2021_05_17_Pandurang
 # Interview-case
 
 Note: the assignment and the tools used are not necessarily similar to what we do/use in reality!
