@@ -13,10 +13,39 @@
 #include "drivers/error_led/error_led.h"
 #include "drivers/speed/speed.h"
 
+/** @brief Initializes slopes and constants of the straight lines defining the torques at various pedal angles for speeds 0 and 50km/hr.
+ *  @param[in] t_0 Critical torque values for speed = 0
+ *  @param[in] t_50 Critical torque values for speed = 50
+ *  @param[in] angle_perc Percentage of pedal angle for which torque values are unique
+ *  @param[out] m_0 Solpes of straight lines defining torque for speed = 0
+ *  @param[out] m_50 Solpes of straight lines defining torque for speed = 50
+ *  @param[out] c_0 Constants of straight lines defining torque for speed = 0
+ *  @param[out] c_50 Constants of straight lines defining torque for speed = 50
+ */
 void init_torque_param(int size, int t_0[], int t_50[], int angle_perc[], float m_0[], float m_50[], float c_0[], float c_50[]);
+
+
+/** @brief Calculates the percentage of pedal angle pressed
+ *  @param[out] pedal_angle_perc Percentage of pedal angle pressed
+ */
 float get_pedal_angle_perc();
+
+
+/** @brief Fetches the current speed
+ *  @param[out] speed Current speed
+ */
 float get_cur_speed();
+
+/** @brief Calculates the required slope based on pedal angle percentage and current speed; Speeds lesser than 50 km/hr are treated as 0km/hr while determining the torque; Speeds above and equal to 50km/hr are treated equal to 50km/hr
+ *  @param[in] speed Current speed
+ *  @param[in] pedal_angle_perc Percentage of pedal angle pressed
+ *  @param[out] m_0 Solpes of straight lines defining torque for speed = 0
+ *  @param[out] m_50 Solpes of straight lines defining torque for speed = 50
+ *  @param[out] c_0 Constants of straight lines defining torque for speed = 0
+ *  @param[out] c_50 Constants of straight lines defining torque for speed = 50
+ */
 float calc_torque(float pedal_angle_perc, float speed, float m_0[], float m_50[], float c_0[], float c_50[]);
+
 
 int main(int argc, char *argv[]) {
     int size = 8;
@@ -162,6 +191,7 @@ float calc_torque(float pedal_angle_perc, float speed, float m_0[], float m_50[]
     float* c = c_0;
     int i = 0;
 
+
     printf("\n");
     if(speed >= 50)
     {
@@ -169,6 +199,7 @@ float calc_torque(float pedal_angle_perc, float speed, float m_0[], float m_50[]
         c = c_50;
     }
 
+//  Iterator to access correct values from the arrays with slopes and constants
     i = pedal_angle_perc / 10;
     switch(i)
     {
